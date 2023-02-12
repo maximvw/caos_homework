@@ -2,8 +2,14 @@
 full=$(df --output=pcent /LOG | sed -n 2p | awk '{print $1}' |  sed 's/[^0-9]*//g')
 if [ $full -ge 70 ]
 then
-sudo tar --exclude='/LOG/lost+found' -rvf /BACKUP/archive.tar /LOG/*
-cd /LOG
-ls /LOG|grep -v lost+found|sudo xargs rm -rfv
+  if ![ -f /BACKUP/archive.tar.gz]
+  then
+  sudo tar --exclude='/LOG/lost+found' -czvf /BACKUP/archive.tar.gz /LOG/*
+  else
+  sudo gunzip /BACKUP/archive.tar.gz
+  sudo tar --exclude='/LOG/lost+found' -rvf /BACKUP/archive.tar /LOG/*
+  sudo gz /BACKUP/archive.tar
+  cd /LOG
+  ls /LOG|grep -v lost+found|sudo xargs rm -rfv
+  fi
 fi
-
