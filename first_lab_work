@@ -1,15 +1,20 @@
 #!/bin/bash
+
 full=$(df --output=pcent /LOG | sed -n 2p | awk '{print $1}' |  sed 's/[^0-9]*//g')
-if [ $full -ge 70 ]
+
+if [ $full -ge 1 ]
 then
-  if ![ -f /BACKUP/archive.tar.gz]
+  sudo mkdir /LOG/old_files
+  cd LOG
+  sudo mv -f $(ls -pt | grep -v /|tail -n 10) old_files
+  cd /
+  if ![ -f /BACKUP/archive.tar.gz ]
   then
-  sudo tar --exclude='/LOG/lost+found' -czvf /BACKUP/archive.tar.gz /LOG/*
+  sudo tar --exclude='/LOG/lost+found' -czvf /BACKUP/archive.tar.gz /LOG/old_files
   else
   sudo gunzip /BACKUP/archive.tar.gz
-  sudo tar --exclude='/LOG/lost+found' -rvf /BACKUP/archive.tar /LOG/*
-  sudo gz /BACKUP/archive.tar
-  cd /LOG
-  ls /LOG|grep -v lost+found|sudo xargs rm -rfv
+  sudo tar --exclude='/LOG/lost+found' -rvf /BACKUP/archive.tar /LOG/old_files/
+  sudo gzip /BACKUP/archive.tar
+  sudo rm -r /LOG/old_files
   fi
 fi
