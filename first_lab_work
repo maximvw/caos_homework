@@ -2,7 +2,8 @@
 
 full=$(df --output=pcent /LOG | sed -n 2p | awk '{print $1}' |  sed 's/[^0-9]*//g')
 
-if [ $full -ge 1 ]
+if [ $full -ge 2 ]
+
 then
   sudo mkdir /LOG/old_files
   cd LOG
@@ -18,3 +19,4 @@ then
   sudo rm -r /LOG/old_files
   fi
 fi
+
